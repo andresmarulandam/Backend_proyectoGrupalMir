@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// schema.prisma
+
+model Appointment {
+  id String @id @default(uuid()) @db.Uuid
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+
+  centerId String @unique @db.Uuid
+  center   Center @relation(fields: [centerId], references: [id])
+
+  doctorId String @db.Uuid
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  createdDate     DateTime @default(now())
+  appointmentDate DateTime
+
+  payment   Payment @relation(fields: [paymentId], references: [id])
+  paymentId String  @unique @db.Uuid // cada valor de paymentId debe ser único en la base de datos y se almacena como un identificador UUID
+}
+
+model Payment {
+  id                  String       @id @default(uuid()) @db.Uuid
+  amount              Int
+  paymentMethod       String       @db.Char(64)
+  paymentConfirmation Boolean
+  appointment         Appointment?
+}
+
+model User {
+  id       String  @id @default(uuid()) @db.Uuid
+  fullName String  @db.Char(128)
+  email    String  @unique @db.Char(64)
+  photo    String? @db.Char(128)
+
+  genderId String @db.Uuid
+  gender   Gender @relation(fields: [genderId], references: [id])
+
+  locationId String   @db.Uuid
+  location   Location @relation(fields: [locationId], references: [id])
+
+  citizenshipNumber Int
+
+  userTypeId String   @db.Uuid
+  userType   UserType @relation(fields: [userTypeId], references: [id])
+
+  enabled Boolean
+
+  Appointment Appointment[]
+}
+
+model Gender {
+  id     String @id @default(uuid()) @db.Uuid
+  gender String @db.Char(64)
+
+  users User[] // Por ejemplo, si tienes un género llamado "Femenino" en el modelo Gender, y hay varios usuarios que tienen ese género en sus registros, la relación users te permitirá acceder a todos esos usuarios desde el registro de "Femenino" en el modelo Gender.
+}
+
+model UserType {
+  id       String @id @default(uuid()) @db.Uuid
+  userType String @db.Char(64)
+
+  users User[]
+}
+
+model Location {
+  id      String @id @default(uuid()) @db.Uuid
+  country String @db.Char(64)
+  city    String @db.Char(64)
+  address String @db.Char(128)
+
+  User User[]
+
+  center Center?
+}
+
+model Center {
+  id          String @id @default(uuid()) @db.Uuid
+  centerName  String @db.Char(64)
+  description String @db.Char(256)
+
+  locationId String   @unique @db.Uuid
+  location   Location @relation(fields: [locationId], references: [id])
+
+  photo   String? @db.Char(128)
+  enabled Boolean
+
+  Appointment     Appointment[]
+  Doctor          Doctor[]
+  specialties     Specialty[]
+  CenterSpecialty CenterSpecialty[]
+}
+
+model Doctor {
+  id       String @id @default(uuid()) @db.Uuid
+  fullName String @db.Char(128)
+
+  centerId String @db.Uuid
+  center   Center @relation(fields: [centerId], references: [id])
+
+  specialtyId String    @db.Uuid
+  specialty   Specialty @relation(fields: [specialtyId], references: [id])
+
+  photo   String? @db.Char(128)
+  enabled Boolean
+
+  Appointment Appointment[]
+}
+
+model Specialty {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @db.Char(64)
+  description String  @db.Char(256)
+  enabled     Boolean
+
+  doctors         Doctor[] // Por ejemplo, si tienes una especialidad llamada "Cardiología" en el modelo Specialty y varios médicos que tienen esa especialidad en sus registros, la relación doctors te permitirá acceder a todos esos médicos desde el registro de "Cardiología" en el modelo Specialty.
+  centers         Center[]
+  CenterSpecialty CenterSpecialty[]
+}
+
+model CenterSpecialty {
+  id String @id @default(uuid()) @db.Uuid
+
+  centerId String @db.Uuid
+  center   Center @relation(fields: [centerId], references: [id])
+
+  specialtyId String    @db.Uuid
+  specialty   Specialty @relation(fields: [specialtyId], references: [id])
+
+  @@unique([centerId, specialtyId]) // Esta restricción asegura que no puede haber duplicados de la combinación de centerId y specialtyId en esa tabla. 
+}
