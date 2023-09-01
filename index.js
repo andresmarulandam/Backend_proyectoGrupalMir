@@ -1,8 +1,12 @@
 import http from "http";
 import { configuration } from "./app/config.js";
 import { app } from "./app/index.js";
+import { connect } from "./app/database.js";
 
 const { port } = configuration.server;
+
+// connect to database
+connect();
 
 const server = http.createServer(app);
 
