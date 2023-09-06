@@ -1,89 +1,101 @@
-import { v4 as uuidv4 } from "uuid";
+import { prisma } from "../../../database.js";
+import { parsePaginationParams } from "../../../utils.js";
 
-const appointments = [];
+export const create = async (req, res, next) => {
+  const { body = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
 
-export const create = (req, res, next) => {
-  const { center, name, doctor, specialty } = req.body; // Desestructurar los datos del cuerpo de la solicitud
-  const id = uuidv4();
-  const newAppointment = { id, center, name, doctor, specialty };
-
-  appointments.push(newAppointment);
-
-  res.status(201);
-  res.json({
-    data: newAppointment, // Devolver los datos recibidos en la respuesta
-  });
-};
-
-export const all = (req, res) => {
-  res.json({
-    data: appointments,
-  });
-};
-
-export const read = (req, res) => {
-  const { id } = req.params;
-  const appointment = appointments.find((a) => a.id === id);
-
-  if (!appointment) {
-    res.status(404);
-    res.json({
-      error: {
-        message: "Cita not found",
-        status: 404,
-      },
+  try {
+    const result = await prisma.appointment.create({
+      data: body,
     });
-    return;
+    res.status(201);
+    res.json({
+      data: result,
+    });
+  } catch (error) {
+    next(error);
   }
 
-  res.json({
-    data: appointment,
-  });
+  // Devolver los datos recibidos en la respuesta
 };
 
-export const update = (req, res) => {
-  const { id } = req.params;
-  const fieldsToUpdate = req.body;
-  const appointmentIndex = appointments.findIndex((a) => a.id === id);
+export const all = async (req, res, next) => {
+  const { query } = req;
+  const { limit, offset } = parsePaginationParams(query);
+  const currentPage = Math.floor(offset / limit) + 1;
 
-  if (appointmentIndex === -1) {
-    res.status(404);
+  try {
+    const [result, total] = await Promise.all([
+      prisma.appointment.findMany({
+        skip: offset,
+        take: limit,
+      }),
+      prisma.appointment.count(),
+    ]);
     res.json({
-      error: {
-        message: "Cita not found",
-        status: 404,
+      data: result,
+      meta: {
+        limit, // El número máximo de registros por página
+        offset, // El número de registros que se han omitido en la paginación.
+        total, // El número total de registros en la base de datos
+        pages: Math.ceil(total / limit), // El número total de páginas basado en la división total / límite,
+        currentPage,
       },
     });
-    return;
+  } catch (error) {
+    next(error);
   }
-
-  appointments[appointmentIndex] = {
-    ...appointments[appointmentIndex],
-    ...fieldsToUpdate,
-  };
-
-  res.json({
-    data: appointments[appointmentIndex],
-  });
 };
 
-export const remove = (req, res) => {
-  const { id } = req.params;
-  const appointmentIndex = appointments.findIndex((a) => a.id === id);
+export const read = async (req, res, next) => {
+  const { params = {} } = req;
 
-  if (appointmentIndex === -1) {
-    res.status(404);
-    res.json({
-      error: {
-        message: "Cita not found",
-        status: 404,
+  try {
+    const result = await prisma.appointment.findUnique({
+      where: {
+        id: params.id,
       },
     });
-    return;
+
+    res.json({
+      data: result,
+    });
+  } catch (error) {
+    next(error);
   }
+};
+export const update = async (req, res, next) => {
+  const { body = {}, params = {} } = req;
+  const { id } = params;
 
-  appointments.splice(appointmentIndex, 1);
+  try {
+    const result = await prisma.appointment.update({
+      where: {
+        id: id,
+      },
+      data: body,
+    });
+    res.json({
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-  res.status(204);
-  res.end();
+export const remove = async (req, res, next) => {
+  const { params = {} } = req;
+  const { id } = params;
+
+  try {
+    await prisma.appointment.delete({
+      where: {
+        id: id,
+      },
+    });
+    res.status(204);
+    res.end();
+  } catch (error) {
+    next(error);
+  }
 };

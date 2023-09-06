@@ -6,4 +6,8 @@ export const configuration = {
   server: {
     port: process.env.PORT,
   },
+  pagination: {
+    limit: 5,
+    offset: 0,
+  },
 };
