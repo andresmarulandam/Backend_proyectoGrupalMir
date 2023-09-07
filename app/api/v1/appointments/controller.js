@@ -1,5 +1,6 @@
 import { prisma } from "../../../database.js";
-import { parsePaginationParams } from "../../../utils.js";
+import { parseOrderParams, parsePaginationParams } from "../../../utils.js";
+import { fields } from "./model.js";
 
 export const create = async (req, res, next) => {
   const { body = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
@@ -22,6 +23,10 @@ export const create = async (req, res, next) => {
 export const all = async (req, res, next) => {
   const { query } = req;
   const { limit, offset } = parsePaginationParams(query);
+  const { orderBy, direction } = parseOrderParams({
+    fields,
+    ...query,
+  });
   const currentPage = Math.floor(offset / limit) + 1;
 
   try {
@@ -29,6 +34,9 @@ export const all = async (req, res, next) => {
       prisma.appointment.findMany({
         skip: offset,
         take: limit,
+        orderBy: {
+          [orderBy]: direction, // esto es si por ejemplo orderBy tiene el valor de id el lo traduce como: id: direction
+        },
       }),
       prisma.appointment.count(),
     ]);
@@ -40,6 +48,8 @@ export const all = async (req, res, next) => {
         total, // El número total de registros en la base de datos
         pages: Math.ceil(total / limit), // El número total de páginas basado en la división total / límite,
         currentPage,
+        orderBy,
+        direction,
       },
     });
   } catch (error) {

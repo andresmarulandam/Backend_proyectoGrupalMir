@@ -10,4 +10,9 @@ export const configuration = {
     limit: 5,
     offset: 0,
   },
+  order: {
+    options: ["asc", "desc"],
+    direction: "desc",
+    orderBy: "appointmentDate",
+  },
 };
