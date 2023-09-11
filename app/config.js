@@ -12,7 +12,17 @@ export const configuration = {
   },
   order: {
     options: ["asc", "desc"],
-    direction: "desc",
-    orderBy: "appointmentDate",
+    appointment: {
+      direction: "desc",
+      orderBy: "appointmentDate",
+    },
+    center: {
+      direction: "desc",
+      orderBy: "id",
+    },
+    user: {
+      direction: "desc",
+      orderBy: "fullName",
+    },
   },
 };

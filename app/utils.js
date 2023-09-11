@@ -1,4 +1,4 @@
-import { configuration } from "./config";
+import { configuration } from "./config.js";
 
 const { order, pagination } = configuration;
 
