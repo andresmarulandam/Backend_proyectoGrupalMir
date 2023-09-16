@@ -1,1 +1,1 @@
-export const fields = ["id", "amount", "paymentMethod", "paymentConfirmation"];
+export const fields = ["amount", "paymentMethod", "paymentConfirmation"];
