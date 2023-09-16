@@ -1,1 +1,1 @@
-export const fields = ["id", "name", "description", "enabled"];
+export const fields = ["name", "description", "enabled"];

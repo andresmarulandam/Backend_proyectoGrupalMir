@@ -1,10 +1,10 @@
 export const fields = [
-  "id",
   "fullName",
+  "gender",
   "email",
-  "genderId",
-  "locationId",
+  "password",
+  "userType",
   "citizenshipNumber",
-  "userTypeId",
   "enabled",
+  "locationId",
 ];

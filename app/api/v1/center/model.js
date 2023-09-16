@@ -1,7 +1,1 @@
-export const fields = [
-  "id",
-  "centerName",
-  "description",
-  "locationId",
-  "enabled",
-];
+export const fields = ["centerName", "description", "locationId", "enabled"];

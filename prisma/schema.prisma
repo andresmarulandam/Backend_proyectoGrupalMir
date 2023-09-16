@@ -25,6 +25,7 @@ model Appointment {
   doctor   Doctor @relation(fields: [doctorId], references: [id])
 
   createdDate     DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   appointmentDate DateTime
 
   payment   Payment @relation(fields: [paymentId], references: [id])
@@ -34,52 +35,39 @@ model Appointment {
 model Payment {
   id                  String       @id @default(uuid()) @db.Uuid
   amount              Int
-  paymentMethod       String       @db.Char(64)
+  paymentMethod       String       @db.VarChar(64)
   paymentConfirmation Boolean
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
   appointment         Appointment?
 }
 
 model User {
-  id       String  @id @default(uuid()) @db.Uuid
-  fullName String  @db.Char(128)
-  email    String  @unique @db.Char(64)
-  photo    String? @db.Char(128)
-
-  genderId String @db.Uuid
-  gender   Gender @relation(fields: [genderId], references: [id])
+  id                String   @id @default(uuid()) @db.Uuid
+  fullName          String   @db.VarChar(128)
+  gender            String   @db.VarChar(64)
+  email             String   @unique @db.VarChar(64)
+  password          String
+  photo             String?  @db.VarChar(128)
+  userType          String   @db.VarChar(64)
+  citizenshipNumber Int
+  enabled           Boolean
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   locationId String   @db.Uuid
   location   Location @relation(fields: [locationId], references: [id])
 
-  citizenshipNumber Int
-
-  userTypeId String   @db.Uuid
-  userType   UserType @relation(fields: [userTypeId], references: [id])
-
-  enabled Boolean
-
   Appointment Appointment[]
 }
 
-model Gender {
-  id     String @id @default(uuid()) @db.Uuid
-  gender String @db.Char(64)
-
-  users User[] // Por ejemplo, si tienes un género llamado "Femenino" en el modelo Gender, y hay varios usuarios que tienen ese género en sus registros, la relación users te permitirá acceder a todos esos usuarios desde el registro de "Femenino" en el modelo Gender.
-}
-
-model UserType {
-  id       String @id @default(uuid()) @db.Uuid
-  userType String @db.Char(64)
-
-  users User[]
-}
-
 model Location {
-  id      String @id @default(uuid()) @db.Uuid
-  country String @db.Char(64)
-  city    String @db.Char(64)
-  address String @db.Char(128)
+  id        String   @id @default(uuid()) @db.Uuid
+  country   String   @db.VarChar(64)
+  city      String   @db.VarChar(64)
+  address   String   @db.VarChar(128)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   User User[]
 
@@ -88,15 +76,16 @@ model Location {
 
 model Center {
   id          String @id @default(uuid()) @db.Uuid
-  centerName  String @db.Char(64)
-  description String @db.Char(256)
+  centerName  String @db.VarChar(64)
+  description String @db.VarChar(256)
 
   locationId String   @unique @db.Uuid
   location   Location @relation(fields: [locationId], references: [id])
 
-  photo   String? @db.Char(128)
-  enabled Boolean
-
+  photo           String?           @db.VarChar(128)
+  enabled         Boolean
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
   Appointment     Appointment[]
   Doctor          Doctor[]
   specialties     Specialty[]
@@ -105,7 +94,7 @@ model Center {
 
 model Doctor {
   id       String @id @default(uuid()) @db.Uuid
-  fullName String @db.Char(128)
+  fullName String @db.VarChar(128)
 
   centerId String @db.Uuid
   center   Center @relation(fields: [centerId], references: [id])
@@ -113,18 +102,22 @@ model Doctor {
   specialtyId String    @db.Uuid
   specialty   Specialty @relation(fields: [specialtyId], references: [id])
 
-  photo   String? @db.Char(128)
+  photo   String? @db.VarChar(128)
   enabled Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   Appointment Appointment[]
 }
 
 model Specialty {
-  id          String  @id @default(uuid()) @db.Uuid
-  name        String  @db.Char(64)
-  description String  @db.Char(256)
-  enabled     Boolean
-
+  id              String            @id @default(uuid()) @db.Uuid
+  name            String            @db.VarChar(64)
+  description     String            @db.VarChar(256)
+  enabled         Boolean
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
   doctors         Doctor[] // Por ejemplo, si tienes una especialidad llamada "Cardiología" en el modelo Specialty y varios médicos que tienen esa especialidad en sus registros, la relación doctors te permitirá acceder a todos esos médicos desde el registro de "Cardiología" en el modelo Specialty.
   centers         Center[]
   CenterSpecialty CenterSpecialty[]
