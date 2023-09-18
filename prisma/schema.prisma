@@ -58,7 +58,7 @@ model User {
   locationId String   @db.Uuid
   location   Location @relation(fields: [locationId], references: [id])
 
-  Appointment Appointment[]
+  appointments Appointment[]
 }
 
 model Location {
