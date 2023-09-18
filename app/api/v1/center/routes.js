@@ -1,5 +1,8 @@
 import { Router } from "express";
 import * as controller from "./controller.js";
+import { router as appointmentsRouter } from "../appointments/routes.js";
+import { router as doctorsRouter } from "../doctor/routes.js";
+import { router as specialtiesRouter } from "../specialty/routes.js";
 
 // eslint-disable-next-line new-cap
 export const router = Router();
@@ -19,3 +22,7 @@ router
   .put(controller.update)
   .patch(controller.update)
   .delete(controller.remove);
+
+router.use("/:centerId/appointments", appointmentsRouter);
+router.use("/:centerId/doctors", doctorsRouter);
+router.use("/:centerId/specialties", specialtiesRouter);

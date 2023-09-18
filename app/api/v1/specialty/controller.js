@@ -21,7 +21,8 @@ export const create = async (req, res, next) => {
 };
 
 export const all = async (req, res, next) => {
-  const { query } = req;
+  const { query, params } = req;
+  const { centerId } = params;
   const { limit, offset } = parsePaginationParams(query);
   const { orderBy, direction } = parseOrderParams({
     fields,
@@ -36,6 +37,16 @@ export const all = async (req, res, next) => {
         take: limit,
         orderBy: {
           [orderBy]: direction, // esto es si por ejemplo orderBy tiene el valor de id el lo traduce como: id: direction
+        },
+        where: {
+          centerId,
+        },
+        include: {
+          _count: {
+            select: {
+              doctors: true,
+            },
+          },
         },
       }),
       prisma.specialty.count(),

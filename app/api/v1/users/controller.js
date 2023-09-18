@@ -37,12 +37,18 @@ export const all = async (req, res, next) => {
         orderBy: {
           [orderBy]: direction, // esto es si por ejemplo orderBy tiene el valor de id el lo traduce como: id: direction
         },
+
+        include: {
+          _count: {
+            select: {
+              appointments: true,
+            },
+          },
+        },
       }),
       prisma.user.count(),
     ]);
-    result.forEach((user) => {
-      user.fullName = user.fullName.trim();
-    });
+
     res.json({
       data: result,
       meta: {
