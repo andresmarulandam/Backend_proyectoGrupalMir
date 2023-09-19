@@ -2,7 +2,7 @@ import { Router } from "express";
 import * as controller from "./controller.js";
 import { router as appointmentsRouter } from "../appointments/routes.js";
 import { router as doctorsRouter } from "../doctor/routes.js";
-import { router as specialtiesRouter } from "../specialty/routes.js";
+import { router as centerspecialtiesRouter } from "../centerSpecialty/routes.js";
 
 // eslint-disable-next-line new-cap
 export const router = Router();
@@ -25,4 +25,4 @@ router
 
 router.use("/:centerId/appointments", appointmentsRouter);
 router.use("/:centerId/doctors", doctorsRouter);
-router.use("/:centerId/specialties", specialtiesRouter);
+router.use("/:centerId/centerspecialties", centerspecialtiesRouter);

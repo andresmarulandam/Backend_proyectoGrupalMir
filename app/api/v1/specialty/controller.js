@@ -22,7 +22,7 @@ export const create = async (req, res, next) => {
 
 export const all = async (req, res, next) => {
   const { query, params } = req;
-  const { centerId } = params;
+  const { centerId, doctorId } = params;
   const { limit, offset } = parsePaginationParams(query);
   const { orderBy, direction } = parseOrderParams({
     fields,
@@ -40,13 +40,7 @@ export const all = async (req, res, next) => {
         },
         where: {
           centerId,
-        },
-        include: {
-          _count: {
-            select: {
-              doctors: true,
-            },
-          },
+          doctorId,
         },
       }),
       prisma.specialty.count(),
@@ -75,6 +69,14 @@ export const read = async (req, res, next) => {
     const result = await prisma.specialty.findUnique({
       where: {
         id: params.id,
+      },
+      include: {
+        _count: {
+          select: {
+            doctors: true,
+            centers: true,
+          },
+        },
       },
     });
 
