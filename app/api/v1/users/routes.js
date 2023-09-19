@@ -12,7 +12,10 @@ export const router = Router();
  * /api/v1/users/:id PUT     - UPDATE
  * /api/v1/users/:id DELETE  - DELETE
  */
-router.route("/").post(controller.create).get(controller.all);
+router.route("/signup").post(controller.signup);
+router.route("/signin").post(controller.signin);
+
+router.route("/").get(controller.all);
 
 router
   .route("/:id")

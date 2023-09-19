@@ -1,23 +1,75 @@
 import { prisma } from "../../../database.js";
 import { parseOrderParams, parsePaginationParams } from "../../../utils.js";
-import { fields } from "./model.js";
+import { encryptPassword, fields, verifyPassword } from "./model.js";
 
-export const create = async (req, res, next) => {
+export const signup = async (req, res, next) => {
   const { body = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
 
   try {
-    const result = await prisma.user.create({
-      data: body,
+    const password = await encryptPassword(body.password);
+    const user = await prisma.user.create({
+      data: {
+        ...body,
+        password,
+      },
+      select: {
+        fullName: true,
+        email: true,
+        createdAt: true,
+      },
     });
     res.status(201);
     res.json({
-      data: result,
+      data: user,
     });
   } catch (error) {
     next(error);
   }
 
   // Devolver los datos recibidos en la respuesta
+};
+export const signin = async (req, res, next) => {
+  const { body } = req;
+  const { email, password } = body;
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        fullName: true,
+        email: true,
+        createdAt: true,
+        password: true,
+      },
+    });
+
+    if (user === null) {
+      return next({
+        message: "Invalid email or password",
+        status: 401,
+      });
+    }
+
+    const passwordMatch = await verifyPassword(password, user.password);
+
+    if (!passwordMatch) {
+      return next({
+        message: "Invalid email or password",
+        status: 401,
+      });
+    }
+
+    res.json({
+      message: "Has iniciado sesión satisfactoriamente",
+      data: {
+        ...user,
+        password: undefined,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const all = async (req, res, next) => {
@@ -36,6 +88,11 @@ export const all = async (req, res, next) => {
         take: limit,
         orderBy: {
           [orderBy]: direction, // esto es si por ejemplo orderBy tiene el valor de id el lo traduce como: id: direction
+        },
+        select: {
+          fullName: true,
+          email: true,
+          createdAt: true,
         },
       }),
       prisma.user.count(),
@@ -66,6 +123,11 @@ export const read = async (req, res, next) => {
       where: {
         id: params.id,
       },
+      select: {
+        fullName: true,
+        email: true,
+        createdAt: true,
+      },
       include: {
         _count: {
           select: {
@@ -91,7 +153,16 @@ export const update = async (req, res, next) => {
       where: {
         id: id,
       },
-      data: body,
+      data: {
+        ...body,
+        updatedAt: new Date().toISOString(),
+      },
+      select: {
+        fullName: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     res.json({
       data: result,
