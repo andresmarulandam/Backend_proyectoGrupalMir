@@ -37,15 +37,6 @@ export const all = async (req, res, next) => {
         orderBy: {
           [orderBy]: direction, // esto es si por ejemplo orderBy tiene el valor de id el lo traduce como: id: direction
         },
-        include: {
-          _count: {
-            select: {
-              Appointment: true,
-              Doctor: true,
-              specialties: true,
-            },
-          },
-        },
       }),
       prisma.center.count(),
     ]);
@@ -73,6 +64,15 @@ export const read = async (req, res, next) => {
     const result = await prisma.center.findUnique({
       where: {
         id: params.id,
+      },
+      include: {
+        _count: {
+          select: {
+            Appointment: true,
+            Doctor: true,
+            CenterSpecialty: true,
+          },
+        },
       },
     });
 

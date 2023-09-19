@@ -6,8 +6,11 @@ export const create = async (req, res, next) => {
   const { body = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
 
   try {
-    const result = await prisma.doctor.create({
-      data: body,
+    const result = await prisma.centerSpecialty.create({
+      data: {
+        centerId: body.centerId,
+        specialtyId: body.specialtyId,
+      },
     });
     res.status(201);
     res.json({
@@ -32,7 +35,7 @@ export const all = async (req, res, next) => {
 
   try {
     const [result, total] = await Promise.all([
-      prisma.doctor.findMany({
+      prisma.centerSpecialty.findMany({
         skip: offset,
         take: limit,
         orderBy: {
@@ -43,7 +46,7 @@ export const all = async (req, res, next) => {
           specialtyId,
         },
       }),
-      prisma.doctor.count(),
+      prisma.centerSpecialty.count(),
     ]);
     res.json({
       data: result,
@@ -66,16 +69,9 @@ export const read = async (req, res, next) => {
   const { params = {} } = req;
 
   try {
-    const result = await prisma.doctor.findUnique({
+    const result = await prisma.centerSpecialty.findUnique({
       where: {
         id: params.id,
-      },
-      include: {
-        _count: {
-          select: {
-            Appointment: true,
-          },
-        },
       },
     });
 
@@ -91,7 +87,7 @@ export const update = async (req, res, next) => {
   const { id } = params;
 
   try {
-    const result = await prisma.doctor.update({
+    const result = await prisma.centerSpecialty.update({
       where: {
         id: id,
       },
@@ -110,7 +106,7 @@ export const remove = async (req, res, next) => {
   const { id } = params;
 
   try {
-    await prisma.doctor.delete({
+    await prisma.centerSpecialty.delete({
       where: {
         id: id,
       },
