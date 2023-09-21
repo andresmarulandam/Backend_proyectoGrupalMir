@@ -10,3 +10,39 @@ export const signToken = (payload, expiresIn = expires) => {
     expiresIn,
   });
 };
+
+export const auth = (req, res, next) => {
+  let token = req.headers.authorization || "";
+  if (token.startsWith("Bearer")) {
+    token = token.substring(7);
+  }
+  if (!token) {
+    return next({
+      message: "Forbidden",
+      status: 403,
+    });
+  }
+  jwt.verify(token, secret, function (err, decoded) {
+    if (err) {
+      return next({
+        message: "Forbidden",
+        status: 403,
+      });
+    }
+    req.decoded = decoded;
+    next();
+  });
+};
+
+export const me = (req, res, next) => {
+  const { decoded = {}, params = {} } = req;
+  const { id: userId } = decoded;
+  const { id } = params;
+
+  if (userId !== id) {
+    return next({
+      message: "Forbidden",
+      status: 403,
+    });
+  }
+};
