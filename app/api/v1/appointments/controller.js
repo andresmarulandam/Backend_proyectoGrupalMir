@@ -3,11 +3,15 @@ import { parseOrderParams, parsePaginationParams } from "../../../utils.js";
 import { fields } from "./model.js";
 
 export const create = async (req, res, next) => {
-  const { body = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
+  const { body = {}, decoded = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
+  const { id: userId } = decoded;
 
   try {
     const result = await prisma.appointment.create({
-      data: body,
+      data: {
+        ...body,
+        userId,
+      },
     });
     res.status(201);
     res.json({
@@ -16,8 +20,6 @@ export const create = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-
-  // Devolver los datos recibidos en la respuesta
 };
 
 export const all = async (req, res, next) => {

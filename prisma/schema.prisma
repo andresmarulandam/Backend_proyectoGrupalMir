@@ -18,7 +18,7 @@ model Appointment {
   userId String @db.Uuid
   user   User   @relation(fields: [userId], references: [id])
 
-  centerId String @unique @db.Uuid
+  centerId String @db.Uuid
   center   Center @relation(fields: [centerId], references: [id])
 
   doctorId String @db.Uuid
