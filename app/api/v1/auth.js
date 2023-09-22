@@ -45,4 +45,5 @@ export const me = (req, res, next) => {
       status: 403,
     });
   }
+  next();
 };
