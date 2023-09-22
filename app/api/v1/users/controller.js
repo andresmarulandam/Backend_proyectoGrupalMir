@@ -1,16 +1,31 @@
 import { prisma } from "../../../database.js";
 import { parseOrderParams, parsePaginationParams } from "../../../utils.js";
 import { signToken } from "../auth.js";
-import { encryptPassword, fields, verifyPassword } from "./model.js";
+import {
+  LoginSchema,
+  UserSchema,
+  encryptPassword,
+  fields,
+  verifyPassword,
+} from "./model.js";
 
 export const signup = async (req, res, next) => {
   const { body = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
 
   try {
-    const password = await encryptPassword(body.password);
+    const { success, data, error } = await UserSchema.safeParseAsync(body);
+    if (!success) {
+      return next({
+        message: "Validator error",
+        status: 400,
+        error,
+      });
+    }
+
+    const password = await encryptPassword(data.password);
     const user = await prisma.user.create({
       data: {
-        ...body,
+        ...data,
         password,
       },
       select: {
@@ -31,8 +46,17 @@ export const signup = async (req, res, next) => {
 };
 export const signin = async (req, res, next) => {
   const { body } = req;
-  const { email, password } = body;
+
   try {
+    const { success, data, error } = await LoginSchema.safeParseAsync(body);
+    if (!success) {
+      return next({
+        message: "Validator error",
+        status: 400,
+        error,
+      });
+    }
+    const { email, password } = data;
     const user = await prisma.user.findUnique({
       where: {
         email,
@@ -124,17 +148,13 @@ export const all = async (req, res, next) => {
 
 export const read = async (req, res, next) => {
   const { params = {} } = req;
-
+  const { id } = params;
   try {
-    const result = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
-        id: params.id,
+        id,
       },
-      select: {
-        fullName: true,
-        email: true,
-        createdAt: true,
-      },
+
       include: {
         _count: {
           select: {
@@ -145,7 +165,11 @@ export const read = async (req, res, next) => {
     });
 
     res.json({
-      data: result,
+      data: {
+        ...user,
+        id: undefined,
+        password: undefined,
+      },
     });
   } catch (error) {
     next(error);
@@ -156,12 +180,22 @@ export const update = async (req, res, next) => {
   const { id } = params;
 
   try {
+    const { success, data, error } = await UserSchema.partial().safeParseAsync(
+      body
+    );
+    if (!success) {
+      return next({
+        message: "Validator error",
+        status: 400,
+        error,
+      });
+    }
     const result = await prisma.user.update({
       where: {
         id: id,
       },
       data: {
-        ...body,
+        ...data,
         updatedAt: new Date().toISOString(),
       },
       select: {
