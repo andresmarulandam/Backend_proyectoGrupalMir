@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as controller from "./controller.js";
 import { router as appointmentsRouter } from "../appointments/routes.js";
-import { auth, me } from "../auth.js";
+import { auth, me, limit } from "../auth.js";
 
 // eslint-disable-next-line new-cap
 export const router = Router();
@@ -13,8 +13,8 @@ export const router = Router();
  * /api/v1/users/:id PUT     - UPDATE
  * /api/v1/users/:id DELETE  - DELETE
  */
-router.route("/signup").post(controller.signup);
-router.route("/signin").post(controller.signin);
+router.route("/signup").post(limit, controller.signup);
+router.route("/signin").post(limit, controller.signin);
 
 router.route("/").get(controller.all);
 
