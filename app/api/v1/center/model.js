@@ -6,7 +6,7 @@ export const CenterSchema = z
     centerName: z
       .string()
       .trim()
-      .max(128)
+      .max(64)
       .transform(function (value) {
         return escape(value);
       }),
