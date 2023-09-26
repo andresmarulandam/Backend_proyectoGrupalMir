@@ -1,7 +1,7 @@
 import { z } from "zod";
 import escape from "validator/lib/escape.js";
 
-export const appointmentSchema = z
+export const AppointmentSchema = z
   .object({
     userId: z
       .string()
@@ -35,4 +35,4 @@ export const appointmentSchema = z
   })
   .strict();
 
-export const fields = [...Object.keys(appointmentSchema.shape)];
+export const fields = [...Object.keys(AppointmentSchema.shape)];

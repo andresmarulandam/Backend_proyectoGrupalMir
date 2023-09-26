@@ -1,13 +1,13 @@
 import { prisma } from "../../../database.js";
 import { parseOrderParams, parsePaginationParams } from "../../../utils.js";
-import { fields, appointmentSchema } from "./model.js";
+import { fields, AppointmentSchema } from "./model.js";
 
 export const create = async (req, res, next) => {
   const { body = {}, decoded = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
   const { id: userId } = decoded;
 
   try {
-    const { success, data, error } = await appointmentSchema.safeParseAsync(
+    const { success, data, error } = await AppointmentSchema.safeParseAsync(
       body
     );
     if (!success) {
@@ -105,9 +105,8 @@ export const update = async (req, res, next) => {
   const { id } = params;
 
   try {
-    const { success, data, error } = await appointmentSchema
-      .partial()
-      .safeParseAsync(body);
+    const { success, data, error } =
+      await AppointmentSchema.partial().safeParseAsync(body);
     if (!success) {
       return next({
         message: "Validator error",
