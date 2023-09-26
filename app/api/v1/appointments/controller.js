@@ -1,15 +1,25 @@
 import { prisma } from "../../../database.js";
 import { parseOrderParams, parsePaginationParams } from "../../../utils.js";
-import { fields } from "./model.js";
+import { fields, AppointmentSchema } from "./model.js";
 
 export const create = async (req, res, next) => {
   const { body = {}, decoded = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
   const { id: userId } = decoded;
 
   try {
+    const { success, data, error } = await AppointmentSchema.safeParseAsync(
+      body
+    );
+    if (!success) {
+      return next({
+        message: "Validator error",
+        status: 400,
+        error,
+      });
+    }
     const result = await prisma.appointment.create({
       data: {
-        ...body,
+        ...data,
         userId,
       },
     });
@@ -95,11 +105,20 @@ export const update = async (req, res, next) => {
   const { id } = params;
 
   try {
+    const { success, data, error } =
+      await AppointmentSchema.partial().safeParseAsync(body);
+    if (!success) {
+      return next({
+        message: "Validator error",
+        status: 400,
+        error,
+      });
+    }
     const result = await prisma.appointment.update({
       where: {
         id: id,
       },
-      data: body,
+      data: { ...data, updatedAt: new Date().toISOString() },
     });
     res.json({
       data: result,

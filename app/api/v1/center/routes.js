@@ -3,6 +3,7 @@ import * as controller from "./controller.js";
 import { router as appointmentsRouter } from "../appointments/routes.js";
 import { router as doctorsRouter } from "../doctor/routes.js";
 import { router as centerspecialtiesRouter } from "../centerSpecialty/routes.js";
+import { limit } from "../auth.js";
 
 // eslint-disable-next-line new-cap
 export const router = Router();
@@ -14,7 +15,7 @@ export const router = Router();
  * /api/v1/centers/:id PUT     - UPDATE
  * /api/v1/centers/:id DELETE  - DELETE
  */
-router.route("/").post(controller.create).get(controller.all);
+router.route("/").post(limit, controller.create).get(controller.all);
 
 router
   .route("/:id")

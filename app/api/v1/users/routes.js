@@ -7,7 +7,8 @@ import { auth, me, limit } from "../auth.js";
 export const router = Router();
 
 /**
- * /api/v1/users POST        - CREATE
+ * /api/v1/users/signup POST        - CREATE
+ * /api/v1/users/signin
  * /api/v1/users GET         - READ ALL
  * /api/v1/users/:id GET     - READ ONE
  * /api/v1/users/:id PUT     - UPDATE

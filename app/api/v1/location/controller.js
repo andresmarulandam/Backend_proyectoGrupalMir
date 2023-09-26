@@ -1,13 +1,21 @@
 import { prisma } from "../../../database.js";
 import { parseOrderParams, parsePaginationParams } from "../../../utils.js";
-import { fields } from "./model.js";
+import { LocationSchema, fields } from "./model.js";
 
 export const create = async (req, res, next) => {
   const { body = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
 
   try {
+    const { success, data, error } = await LocationSchema.safeParseAsync(body);
+    if (!success) {
+      return next({
+        message: "Validation error",
+        status: 400,
+        error,
+      });
+    }
     const result = await prisma.location.create({
-      data: body,
+      data,
     });
     res.status(201);
     res.json({
@@ -79,11 +87,23 @@ export const update = async (req, res, next) => {
   const { id } = params;
 
   try {
+    const { success, data, error } =
+      await LocationSchema.partial().safeParseAsync(body);
+    if (!success) {
+      return next({
+        message: "Validation error",
+        status: 400,
+        error,
+      });
+    }
     const result = await prisma.location.update({
       where: {
         id: id,
       },
-      data: body,
+      data: {
+        ...data,
+        updatedAt: new Date().toISOString(),
+      },
     });
     res.json({
       data: result,
