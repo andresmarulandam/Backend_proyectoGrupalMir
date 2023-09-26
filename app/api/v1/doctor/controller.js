@@ -112,7 +112,10 @@ export const update = async (req, res, next) => {
       where: {
         id: id,
       },
-      data,
+      data: {
+        ...data,
+        updatedAt: new Date().toISOString(),
+      },
     });
     res.json({
       data: result,

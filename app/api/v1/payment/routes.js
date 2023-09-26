@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as controller from "./controller.js";
-
+import { limit } from "../auth.js";
 // eslint-disable-next-line new-cap
 export const router = Router();
 
@@ -11,7 +11,7 @@ export const router = Router();
  * /api/v1/payments/:id PUT     - UPDATE
  * /api/v1/payments/:id DELETE  - DELETE
  */
-router.route("/").post(controller.create).get(controller.all);
+router.route("/").post(limit, controller.create).get(controller.all);
 
 router
   .route("/:id")
