@@ -1,13 +1,13 @@
-import { prisma } from "../../../database.js";
-import { parseOrderParams, parsePaginationParams } from "../../../utils.js";
-import { signToken } from "../auth.js";
+import { prisma } from '../../../database.js';
+import { parseOrderParams, parsePaginationParams } from '../../../utils.js';
+import { signToken } from '../auth.js';
 import {
   LoginSchema,
   UserSchema,
   encryptPassword,
   fields,
   verifyPassword,
-} from "./model.js";
+} from './model.js';
 
 export const signup = async (req, res, next) => {
   const { body = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
@@ -16,7 +16,7 @@ export const signup = async (req, res, next) => {
     const { success, data, error } = await UserSchema.safeParseAsync(body);
     if (!success) {
       return next({
-        message: "Validator error",
+        message: 'Validator error',
         status: 400,
         error,
       });
@@ -51,7 +51,7 @@ export const signin = async (req, res, next) => {
     const { success, data, error } = await LoginSchema.safeParseAsync(body);
     if (!success) {
       return next({
-        message: "Validator error",
+        message: 'Validator error',
         status: 400,
         error,
       });
@@ -67,12 +67,13 @@ export const signin = async (req, res, next) => {
         email: true,
         createdAt: true,
         password: true,
+        userType: true,
       },
     });
 
     if (user === null) {
       return next({
-        message: "Invalid email or password",
+        message: 'Invalid email or password',
         status: 401,
       });
     }
@@ -81,14 +82,14 @@ export const signin = async (req, res, next) => {
 
     if (!passwordMatch) {
       return next({
-        message: "Invalid email or password",
+        message: 'Invalid email or password',
         status: 401,
       });
     }
     const token = signToken({ id: user.id });
 
     res.json({
-      message: "Has iniciado sesión satisfactoriamente",
+      message: 'Has iniciado sesión satisfactoriamente',
       data: {
         ...user,
         id: undefined,
@@ -181,11 +182,11 @@ export const update = async (req, res, next) => {
 
   try {
     const { success, data, error } = await UserSchema.partial().safeParseAsync(
-      body
+      body,
     );
     if (!success) {
       return next({
-        message: "Validator error",
+        message: 'Validator error',
         status: 400,
         error,
       });
