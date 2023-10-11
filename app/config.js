@@ -1,4 +1,4 @@
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
 dotenv.config();
 
@@ -11,18 +11,18 @@ export const configuration = {
     offset: 0,
   },
   order: {
-    options: ['asc', 'desc'],
+    options: ["asc", "desc"],
     appointment: {
-      direction: 'desc',
-      orderBy: 'appointmentDate',
+      direction: "desc",
+      orderBy: "appointmentDate",
     },
     center: {
-      direction: 'desc',
-      orderBy: 'id',
+      direction: "desc",
+      orderBy: "id",
     },
     user: {
-      direction: 'desc',
-      orderBy: 'fullName',
+      direction: "desc",
+      orderBy: "fullName",
     },
   },
   token: {
@@ -34,3 +34,4 @@ export const configuration = {
     duration: process.env.RATE_LIMIT_DURATION,
   },
 };
+export const MERCADOPAGO_ACCESS_TOKEN = process.env.MERCADOPAGO_ACCESS_TOKEN;
