@@ -16,9 +16,9 @@ export const createOrder = async (req, res, next) => {
         },
       ],
       back_urls: {
-        success: "http://localhost:3000/api/mercadopago/successpurchase",
-        failure: "http://localhost:3000/api/mercadopago/failurepurchase",
-        pending: "http://localhost:3000/api/mercadopago/pendingpurchase",
+        success: "http://localhost:5173/api/mercadopago/successpurchase",
+        failure: "http://localhost:5173/api/mercadopago/failurepurchase",
+        pending: "http://localhost:5173/api/mercadopago/pendingpurchase",
       },
       notification_url:
         "https://ffd3-181-71-24-54.ngrok.io/api/mercadopago/webhook",
@@ -42,7 +42,3 @@ export const receiveWebhook = async (req, res, next) => {
     next(error);
   }
 };
-
-export const successPurchase = (req, res) => res.send("Success Purchase");
-export const failurePurchase = (req, res) => res.send("Failure Purchase");
-export const pendingPurchase = (req, res) => res.send("Pending Purchase");
