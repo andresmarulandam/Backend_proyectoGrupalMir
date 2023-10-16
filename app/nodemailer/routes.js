@@ -1,7 +1,13 @@
-import { Router } from "express";
-import * as controller from "./controller.js";
+import { Router } from 'express';
+import * as controller from './controller.js';
 
 // eslint-disable-next-line new-cap
-export const router = Router();
+export const router = Router({
+  mergeParams: true,
+});
 
-router.route("/").post(controller.recoverPassword);
+router.route('/recover').post(controller.recover);
+
+router.route('/confirmation/:email').post(controller.confirmation);
+
+// router.post('/recover', controller.recoverPassword);
