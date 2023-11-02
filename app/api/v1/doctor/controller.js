@@ -94,6 +94,44 @@ export const read = async (req, res, next) => {
     next(error);
   }
 };
+
+export const toggleFavorite = async (req, res, next) => {
+  const { body = {}, params = {} } = req;
+  const { id } = params;
+  const { favorite } = body;
+
+  try {
+    await prisma.doctor.update({
+      where: {
+        id: id,
+      },
+      data: {
+        favorite,
+      },
+    });
+    res.json({
+      id,
+      favorite,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFavoriteDoctors = async (req, res, next) => {
+  try {
+    const favoriteDoctors = await prisma.doctor.findMany({
+      where: {
+        favorite: true, // Filtrar por los doctores favoritos
+      },
+    });
+
+    res.status(200).json({ doctors: favoriteDoctors });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const update = async (req, res, next) => {
   const { body = {}, params = {} } = req;
   const { id } = params;

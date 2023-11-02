@@ -16,7 +16,7 @@ export const router = Router({
  * /api/v1/doctors/:id DELETE  - DELETE
  */
 router.route("/").post(limit, controller.create).get(controller.all);
-
+router.route("/favorites").get(controller.getFavoriteDoctors);
 router
   .route("/:id")
   .get(controller.read)
@@ -25,3 +25,5 @@ router
   .delete(controller.remove);
 
 router.use("/:doctorId/appointments", appointmentsRouter);
+
+router.route("/:id/favorite").put(controller.toggleFavorite);

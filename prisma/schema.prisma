@@ -103,8 +103,9 @@ model Doctor {
   specialtyId String    @db.Uuid
   specialty   Specialty @relation(fields: [specialtyId], references: [id])
 
-  photo   String? @db.VarChar(128)
-  enabled Boolean
+  photo    String? @db.VarChar(128)
+  enabled  Boolean
+  favorite Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
