@@ -25,6 +25,7 @@ export const DoctorSchema = z
         return escape(value);
       }),
     enabled: z.boolean(),
+    favorite: z.boolean(),
   })
   .strict();
 
