@@ -1,4 +1,4 @@
-import mercadopago from "mercadopago";
+import mercadopago from 'mercadopago';
 
 export const createOrder = async (req, res, next) => {
   mercadopago.configure({
@@ -9,19 +9,19 @@ export const createOrder = async (req, res, next) => {
     const result = await mercadopago.preferences.create({
       items: [
         {
-          title: "Cita",
+          title: 'Cita',
           unit_price: 10000,
-          currency_id: "COL",
+          currency_id: 'COL',
           quantity: 1,
         },
       ],
       back_urls: {
-        success: "http://localhost:5173/api/mercadopago/successpurchase",
-        failure: "http://localhost:5173/api/mercadopago/failurepurchase",
-        pending: "http://localhost:5173/api/mercadopago/pendingpurchase",
+        success: `${process.env.FRONTEND_URL}/api/mercadopago/successpurchase`,
+        failure: `${process.env.FRONTEND_URL}/api/mercadopago/failurepurchase`,
+        pending: `${process.env.FRONTEND_URL}/api/mercadopago/pendingpurchase`,
       },
       notification_url:
-        "https://ffd3-181-71-24-54.ngrok.io/api/mercadopago/webhook",
+        'https://ffd3-181-71-24-54.ngrok.io/api/mercadopago/webhook',
     });
     console.log(result);
     res.json(result.body);
@@ -33,8 +33,8 @@ export const createOrder = async (req, res, next) => {
 export const receiveWebhook = async (req, res, next) => {
   const payment = req.query;
   try {
-    if (payment.type === "payment") {
-      const data = await mercadopago.payment.findById(payment["data.id"]);
+    if (payment.type === 'payment') {
+      const data = await mercadopago.payment.findById(payment['data.id']);
       console.log(data);
     }
     res.sendStatus(204);
