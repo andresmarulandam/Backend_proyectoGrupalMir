@@ -1,5 +1,5 @@
-import { z } from "zod";
-import escape from "validator/lib/escape.js";
+import { z } from 'zod';
+import escape from 'validator/lib/escape.js';
 
 export const AppointmentSchema = z
   .object({
@@ -25,7 +25,7 @@ export const AppointmentSchema = z
         return escape(value);
       }),
     appointmentDate: z.coerce.date(),
-    paymentId: z
+    status: z
       .string()
       .trim()
       .max(128)

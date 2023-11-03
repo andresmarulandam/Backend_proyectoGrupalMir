@@ -92,7 +92,6 @@ export const signin = async (req, res, next) => {
       message: 'Has iniciado sesión satisfactoriamente',
       data: {
         ...user,
-        id: undefined,
         password: undefined,
       },
       meta: {
