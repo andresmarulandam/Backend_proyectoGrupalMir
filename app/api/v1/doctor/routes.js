@@ -24,6 +24,8 @@ router
   .patch(controller.update)
   .delete(controller.remove);
 
+router.route("/:id/citashoy").get(controller.appointmentsToday);
+
 router.use("/:doctorId/appointments", appointmentsRouter);
 
 router.route("/:id/favorite").put(controller.toggleFavorite);
