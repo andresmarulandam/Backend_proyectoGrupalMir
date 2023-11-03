@@ -163,6 +163,37 @@ export const update = async (req, res, next) => {
   }
 };
 
+export const appointmentsToday = async (req, res, next) => {
+  const { doctorId } = req.params;
+
+  try {
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0); // Establece la hora a 00:00:00 del día actual
+    console.log(startOfToday);
+
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999); // Establece la hora a 23:59:59 del día actual
+
+    const citasHoyDoctor = await prisma.appointment.findMany({
+      where: {
+        doctorId,
+        appointmentDate: {
+          gte: startOfToday,
+          lt: endOfToday,
+        },
+      },
+      // Otras configuraciones de búsqueda si es necesario
+    });
+
+    res.json({
+      citas: citasHoyDoctor,
+      doctorId, // Agrega el ID del doctor si lo necesitas en la respuesta
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const remove = async (req, res, next) => {
   const { params = {} } = req;
   const { id } = params;
