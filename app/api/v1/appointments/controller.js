@@ -1,6 +1,6 @@
-import { prisma } from "../../../database.js";
-import { parseOrderParams, parsePaginationParams } from "../../../utils.js";
-import { fields, AppointmentSchema } from "./model.js";
+import { prisma } from '../../../database.js';
+import { parseOrderParams, parsePaginationParams } from '../../../utils.js';
+import { fields, AppointmentSchema } from './model.js';
 
 export const create = async (req, res, next) => {
   const { body = {}, decoded = {} } = req; // Desestructurar los datos del cuerpo de la solicitud
@@ -8,11 +8,11 @@ export const create = async (req, res, next) => {
 
   try {
     const { success, data, error } = await AppointmentSchema.safeParseAsync(
-      body
+      body,
     );
     if (!success) {
       return next({
-        message: "Validator error",
+        message: 'Validator error',
         status: 400,
         error,
       });
@@ -115,7 +115,7 @@ export const update = async (req, res, next) => {
       await AppointmentSchema.partial().safeParseAsync(body);
     if (!success) {
       return next({
-        message: "Validator error",
+        message: 'Validator error',
         status: 400,
         error,
       });
@@ -146,6 +146,34 @@ export const remove = async (req, res, next) => {
     });
     res.status(204);
     res.end();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const appointmentsByDate = async (req, res, next) => {
+  const { doctorId, date } = req.params;
+  try {
+    const startDate = new Date(`${date}T00:00:00`);
+    console.log(startDate);
+
+    const endDate = new Date(`${date}T23:59:00`);
+    console.log(endDate);
+
+    const data = await prisma.appointment.findMany({
+      where: {
+        doctorId,
+        appointmentDate: {
+          gte: startDate,
+          lt: endDate,
+        },
+      },
+      // Otras configuraciones de búsqueda si es necesario
+    });
+
+    res.json({
+      data,
+    });
   } catch (error) {
     next(error);
   }
