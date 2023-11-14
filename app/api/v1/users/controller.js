@@ -161,6 +161,13 @@ export const read = async (req, res, next) => {
             appointments: true,
           },
         },
+        location: {
+          select: {
+            address: true,
+            city: true,
+            country: true,
+          },
+        },
       },
     });
 
