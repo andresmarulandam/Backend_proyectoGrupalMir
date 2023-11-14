@@ -57,6 +57,11 @@ export const all = async (req, res, next) => {
               fullName: true,
             },
           },
+          center: {
+            select: {
+              centerName: true,
+            },
+          },
         },
         where: {
           userId,
@@ -100,6 +105,7 @@ export const read = async (req, res, next) => {
     next(error);
   }
 };
+
 export const update = async (req, res, next) => {
   const { body = {}, params = {} } = req;
   const { id } = params;
