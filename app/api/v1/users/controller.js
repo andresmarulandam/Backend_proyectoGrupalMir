@@ -29,9 +29,13 @@ export const signup = async (req, res, next) => {
         password,
       },
       select: {
+        id: true,
         fullName: true,
         email: true,
         createdAt: true,
+        password: true,
+        userType: true,
+        photo: true,
       },
     });
     res.status(201);
@@ -68,6 +72,7 @@ export const signin = async (req, res, next) => {
         createdAt: true,
         password: true,
         userType: true,
+        photo: true,
       },
     });
 
@@ -174,7 +179,6 @@ export const read = async (req, res, next) => {
     res.json({
       data: {
         ...user,
-        id: undefined,
         password: undefined,
       },
     });
@@ -187,9 +191,12 @@ export const update = async (req, res, next) => {
   const { id } = params;
 
   try {
-    const { success, data, error } = await UserSchema.partial().safeParseAsync(
-      body,
-    );
+    console.log(req.file);
+
+    const { success, data, error } = await UserSchema.partial().safeParseAsync({
+      ...body,
+      photo: req.file?.path,
+    });
     if (!success) {
       return next({
         message: 'Validator error',

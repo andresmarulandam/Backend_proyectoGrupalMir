@@ -1,6 +1,6 @@
-import { hash, compare } from "bcrypt";
-import { z } from "zod";
-import escape from "validator/lib/escape.js";
+import { hash, compare } from 'bcrypt';
+import { z } from 'zod';
+import escape from 'validator/lib/escape.js';
 
 export const PersonSchema = z
   .object({
@@ -30,6 +30,8 @@ export const PersonSchema = z
 
     enabled: z.boolean(),
     locationId: z.string().trim(),
+    photo: z.string().optional(),
+    phone: z.number().int().optional(),
   })
   .strict();
 
