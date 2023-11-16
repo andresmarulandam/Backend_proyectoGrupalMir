@@ -29,9 +29,13 @@ export const signup = async (req, res, next) => {
         password,
       },
       select: {
+        id: true,
         fullName: true,
         email: true,
         createdAt: true,
+        password: true,
+        userType: true,
+        photo: true,
       },
     });
     res.status(201);
@@ -68,6 +72,7 @@ export const signin = async (req, res, next) => {
         createdAt: true,
         password: true,
         userType: true,
+        photo: true,
       },
     });
 
